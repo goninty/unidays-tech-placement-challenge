@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class UnidaysDiscountChallenge {
-    private Item[] pricingRules;
+    private HashMap<Item, Discount> pricingRules;
     private ArrayList<Item> basket = new ArrayList<>();
 
-    public UnidaysDiscountChallenge(Item[] pricingRules) {
+    public UnidaysDiscountChallenge(HashMap<Item, Discount> pricingRules) {
         this.pricingRules = pricingRules;
     }
 
@@ -26,36 +28,29 @@ public class UnidaysDiscountChallenge {
             totalPrice += i.getPrice();
         }
 
-        if (totalPrice < 50) { // if total cost w/o delivery is less than £50, charge for delivery
+        totalPrice -= applyDiscounts();
+
+        if (totalPrice > 0 && totalPrice < 50) { // if total cost w/o delivery is less than £50, charge for delivery
             deliveryCharge = 7;
         }
 
         return new Price(totalPrice, deliveryCharge);
     }
 
-    public static void main(String[] args) {
-        // setting out the pricing rules
-        Item[] pricingRules = {
-                new Item('A', 8.00, "None"),
-                new Item('B', 12.00, "2 for 20.00"),
-                new Item('C', 4.00, "3 for 10.00"),
-                new Item('D', 7.00, "Buy 1 get 1 free"),
-                new Item('E', 5.00, "3 for the price of 2")
-        };
+    private double applyDiscounts() {
+        double fullAmountToDeduct = 0;
 
-        UnidaysDiscountChallenge example = new UnidaysDiscountChallenge(pricingRules);
+        // the hashmap holds the items as keys and discounts as values
+        for (HashMap.Entry<Item, Discount> i : pricingRules.entrySet()) {
+            if (i.getValue() != null) { // if a discount actually exists for the item
+                int frequency = Collections.frequency(basket, i.getKey());
+                if (frequency >= i.getValue().getNumberForDiscount()) {
+                    int numberEligibleForDiscount = Math.floorDiv(frequency, i.getValue().getNumberForDiscount());
+                    fullAmountToDeduct += numberEligibleForDiscount * i.getValue().getAmountToDeduct();
+                }
+            }
+        }
 
-        example.AddToBasket(pricingRules[0]);
-
-        Price result = example.CalculateTotalPrice();
-        double totalPrice = result.getTotal();
-        double deliveryCharge = result.getDeliveryCharge();
-        double overallTotal = totalPrice + deliveryCharge;
-
-        System.out.println("Item: " + pricingRules[0].getName());
-        System.out.println("Total: " + totalPrice);
-        System.out.println("Delivery charge: " + deliveryCharge);
-        System.out.println("Overall total: " + overallTotal);
+        return fullAmountToDeduct;
     }
-
 }
