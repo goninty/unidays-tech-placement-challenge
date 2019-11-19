@@ -2,19 +2,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
 
 class UnidaysDiscountChallengeTest {
     private static HashMap<Item, Discount> pricingRules;
+    // instantiate items
     private static Item itemA = new Item('A', 8.00);
     private static Item itemB = new Item('B', 12.00);
     private static Item itemC = new Item('C', 4.00);
     private static Item itemD = new Item('D', 7.00);
     private static Item itemE = new Item('E', 5.00);
-
 
     private UnidaysDiscountChallenge example;
     private Price result;
@@ -24,12 +22,13 @@ class UnidaysDiscountChallengeTest {
     @BeforeAll()
     static void initAll() {
         System.out.println("Creating the pricing rules...");
+        // add items to the pricingRules map as well as mapping the items to their relevant discounts
         pricingRules = new HashMap<>();
         pricingRules.put(itemA, null);
-        pricingRules.put(itemB, new Discount(2, 20.00, 12.00));
-        pricingRules.put(itemC, new Discount(3, 10.00, 4.00));
-        pricingRules.put(itemD, new Discount(2, 7.00, 7.00));
-        pricingRules.put(itemE, new Discount(3, 10.00, 5.00));
+        pricingRules.put(itemB, new Discount(2, 20.00, itemB.getPrice()));
+        pricingRules.put(itemC, new Discount(3, 10.00, itemC.getPrice()));
+        pricingRules.put(itemD, new Discount(2, 7.00, itemD.getPrice()));
+        pricingRules.put(itemE, new Discount(3, 10.00, itemE.getPrice()));
     }
 
     @BeforeEach
@@ -46,10 +45,14 @@ class UnidaysDiscountChallengeTest {
                 () -> assertEquals(expectedDelivery, result.getDeliveryCharge())
         );
 
-        System.out.println("Tearing down our example object...");
+        System.out.println("Tearing down our example object and our result value...");
         example = null;
         result = null;
     }
+
+    /**
+     * All of the example tests have been implemented below.
+     */
 
     @Test
     void addNone() {
