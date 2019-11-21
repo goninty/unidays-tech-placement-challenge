@@ -9,7 +9,7 @@ public class Discount {
     /**
      * Constructor, sets the values of the discount object.
      * @param numberForDiscount The number of times an item must be in the basket to apply the discount.
-     * @param discountPrice The amount of money to deduct from the total basket price if the discount is utilised.
+     * @param discountPrice The amount that the discounted items (together) will cost when the discount is applied.
      * @param itemPrice The price of the item this discount is related to.
      */
     public Discount(int numberForDiscount, double discountPrice, double itemPrice) {
